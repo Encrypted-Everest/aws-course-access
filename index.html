@@ -12,7 +12,7 @@
   <script>
     // Fetch the IP addresses from the GitHub Gist file
     async function checkAccess() {
-      const response = await fetch("https://gist.githubusercontent.com/YOUR_USERNAME/YOUR_GIST_ID/raw/aws-course-access.txt");
+      const response = await fetch("https://gist.github.com/Encrypted-Everest/205de493be797885839fe4c658bda9d1/raw/aws-course-access.txt");
       const data = await response.text();
       const ipAddresses = data.split('\n').filter(Boolean); // Get all IPs from the text
 
@@ -28,10 +28,10 @@
           const updatedData = "ip_addresses:\n" + ipAddresses.join("\n");
           
           // Update the Gist with new IP list
-          await fetch("https://api.github.com/gists/YOUR_GIST_ID", {
+          await fetch("https://gist.github.com/Encrypted-Everest/205de493be797885839fe4c658bda9d1", {
             method: "PATCH",
             headers: {
-              "Authorization": "token YOUR_GITHUB_TOKEN",
+              "Authorization": "token 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",
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
