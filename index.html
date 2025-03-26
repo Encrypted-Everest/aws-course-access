@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Course Access</title>
+</head>
+<body>
+  <h1>Welcome to the AWS Course</h1>
+  <p id="message">Checking access...</p>
+
+  <script>
+    // Fetch the IP addresses from the GitHub Gist file
+    async function checkAccess() {
+      const response = await fetch("https://gist.githubusercontent.com/YOUR_USERNAME/YOUR_GIST_ID/raw/aws-course-access.txt");
+      const data = await response.text();
+      const ipAddresses = data.split('\n').filter(Boolean); // Get all IPs from the text
+
+      const userIP = await fetch("https://api.ipify.org?format=json").then(res => res.json()).then(data => data.ip); // Get user's public IP
+      
+      const messageElement = document.getElementById("message");
+
+      if (ipAddresses.includes(userIP)) {
+        messageElement.textContent = "Access granted. Welcome back!";
+      } else {
+        if (ipAddresses.length < 30) {
+          ipAddresses.push(userIP);
+          const updatedData = "ip_addresses:\n" + ipAddresses.join("\n");
+          
+          // Update the Gist with new IP list
+          await fetch("https://api.github.com/gists/YOUR_GIST_ID", {
+            method: "PATCH",
+            headers: {
+              "Authorization": "token YOUR_GITHUB_TOKEN",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              files: {
+                "aws-course-access.txt": {
+                  content: updatedData
+                }
+              }
+            })
+          });
+
+          messageElement.textContent = "Access granted! You are one of the first 30 users!";
+        } else {
+          messageElement.textContent = "Access Denied. Only the first 30 users can access this.";
+        }
+      }
+    }
+
+    checkAccess();
+  </script>
+</body>
+</html>
